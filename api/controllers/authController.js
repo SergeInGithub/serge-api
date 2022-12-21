@@ -12,7 +12,7 @@ jwt = require('jsonwebtoken'),
 //DEFINE CONTROLLER FUNCTIONS
 
 // List all users
-exports.listAllusers = (req, res) => {
+exports.listAllUsers = (req, res) => {
   let allUsers = User.find({}, (err, users) => {
     if (err) {
       res.status(500).send({
@@ -22,6 +22,23 @@ exports.listAllusers = (req, res) => {
       res.status(200).json(users)
     }
   })
+}
+
+exports.listOneUser = async (req, res) => {
+
+  try{
+    const user = await User.findOne({ _id: req.params.id})
+
+    if(!user){
+      res.status(404).json({
+        message: "User not found"
+      })
+    } else{
+      res.status(200).json(user)
+    }
+  } catch(error){
+    console.log("Error while fetching user: ", error.message)
+  }
 }
 
 // User Register function
@@ -49,22 +66,6 @@ exports.register = async (req, res) => {
       message: `Error creating user: ${error.message}`
     })
   }
-
-  // const user = await User.findOne({email: req.body.email})
-  // if(user){
-  //   res.status(404).json({message: "Email already in use"})
-  // } else{
-  //   try{
-  //     const newUser = await new User(req.body);
-  //     newUser.password = bcrypt.hashSync(req.body.password, 10);
-  //     await newUser.save()
-  //     console.log("This is newUser: ", newUser)
-  //     newUser.password = undefined;
-  //     res.status(201).json(newUser);
-  //   } catch(error){
-  //     console.log("Error while creating user: ", error.message)
-  //   }
-  // }
 
 };
 
@@ -101,47 +102,4 @@ exports.signIn = async (req, res) => {
   }
   res.status(200).json(userInfo)
 
-  // const user = await User.findOne({
-  //   email: req.body.email
-  // })
-  // if (!user) {
-  //   res.status(402).json({
-  //     message: 'Authentication failed. User not found.'
-  //   });
-  // } else{
-  //   if (!user.comparePassword(req.body.password)) {
-  //     res.status(402).json({
-  //       message: 'Authentication failed. Wrong password.'
-  //     });
-  //   } else {
-  //     const token = jwt.sign({
-  //       userId: user._id
-  //     }, process.env.JWT_KEY, {
-  //       expiresIn: '1d'
-  //     })
-  //     const userData = {
-  //       fullName: user.fullName,
-  //       email: user.email,
-  //       token
-  //     }
-  //     res.status(200).json(
-  //       userData
-  //     );
-  //   }
-  // }
-
-
-
-};
-
-// User Register function
-exports.loginRequired = (req, res, next) => {
-  if (req.user) {
-    // res.json({ message: 'Authorized User, Action Successful!'});
-    next()
-  } else {
-    res.status(401).json({
-      message: 'Unauthorized user!'
-    });
-  }
 };

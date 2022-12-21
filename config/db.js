@@ -11,6 +11,7 @@ useNewUrlParser:  true,
 useUnifiedTopology:  true
 };
 
+mongoose.set('strictQuery', true);
 // Connect MongoDB Atlas using mongoose connect method
 mongoose.connect(uri, options).then(() => {
 console.log("Database connection established!");

@@ -1,33 +1,124 @@
 'use strict';
 
-// create App function
-    module.exports = function(app) {
-      var userHandlers = require('../middleware/authenticationMiddleware');
-      const {loginRequired, isAdmin} = userHandlers;
+const express = require('express');
 
-        var postList = require('../controllers/postController');
-        /// import authenticaton middleware
-        // var userHandlers = require('../controllers/authController');
-// Import validation middleware
+var userHandlers = require('../middleware/authenticationMiddleware');
+
+var postList = require('../controllers/postController');
+
+const {loginRequired, isAdmin} = userHandlers;
+
 const {validate} = require("../middleware/validationMiddleware");
+
 const validation = require("../middleware/schemasValidation/postValidation")
 
-// postList Routes
-// get and post request for /posts endpoints
-        app
-        .route("/post/all")
-        .get(postList.listAllposts)
-        app
-        .route("/post/:id")
-        .get(postList.listPost)
-        app
-        .route("/post/create")
-        .post([loginRequired, isAdmin, validate(validation.postValidation)], postList.createNewpost);
+const router = express.Router();
 
-// put and delete request for /posts endpoints
-        app
-        .route("/post/update/:id")
-        .patch([loginRequired, isAdmin], postList.updatePost)
 
-        app.route("/post/delete/:id").delete(loginRequired,isAdmin, postList.deletePost);
-    };
+/**
+ * @swagger
+ * /post/all:
+ *    get:
+ *      tags: [post endpoints]
+ *      description: Returns all posts from our database
+ *      responses:
+ *        200:
+ *          description: Get all posts from our API
+ */
+router.get('/post/all', postList.listAllposts) // all posts
+/**
+ * @swagger
+ * /post/get/{postId}:
+ *    get:
+ *      tags: [post endpoints]
+ *      summary: returns a one post should provide postId from our database
+ *      parameters:
+ *        - name: postId
+ *          in: path
+ *          description: provide postId
+ *          required: true
+ *      responses:
+ *        200:
+ *          description: success
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/post'
+ *        404:
+ *          description: not found
+ */
+router.get('/post/get/:id', postList.listPost) // individual post
+/**
+ * @swagger
+ * /post/create/:
+ *   post:
+ *     summary: Create a new post
+ *     tags: [post endpoints]
+ *     requestBody:
+ *       description: please fill all required fields
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreatePostInput'
+ *     responses:
+ *       '201':
+ *         description: Created
+ */
+router.post(
+  '/post/create',
+  [loginRequired, isAdmin, validate(validation.postValidation)],
+  postList.createNewpost
+) // create post
+
+/**
+ * @swagger
+ * /post/update/{postId}:
+ *   patch:
+ *     summary: Update a post only by admin
+ *     tags: [post endpoints]
+ *     parameters:
+ *      - name: postId
+ *        in: path
+ *        description: provide postId
+ *        required: true
+ *     requestBody:
+ *       description: please fill all required fields
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreatePostInput'
+ *     responses:
+ *       '201':
+ *         description: Created successfully
+ */
+router.patch(
+  '/post/update/:id',
+  [loginRequired, isAdmin, validate(validation.postValidation)],
+  postList.updatePost
+) // update post
+/**
+ * @swagger
+ * /post/delete/{postId}:
+ *    delete:
+ *      tags: [post endpoints]
+ *      summary: deleting one post
+ *      parameters:
+ *        - name: postId
+ *          in: path
+ *          description: provide postId
+ *          required: true
+ *      responses:
+ *        200:
+ *          description: success
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/post'
+ *        404:
+ *          description: not found
+ */
+router.delete('/post/delete/:id', [loginRequired, isAdmin], postList.deletePost) // delete post
+
+module.exports = router

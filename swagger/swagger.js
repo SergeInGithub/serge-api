@@ -5,7 +5,7 @@ const options = {
     definition: {
       openapi: '3.0.0',
       info: {
-        title: 'My Blog api',
+        title: 'S api',
         version: '1.0.0'
       },
       components: {
@@ -25,7 +25,7 @@ const options = {
       ],
       swagger: '3.0'
     },
-    apis: ['./api/routes/*.js']
+    apis: ['./api/routes/*.js', './swagger/schemas/*.js']
   }
 
 const swaggerSpec = swaggerJsdoc(options)

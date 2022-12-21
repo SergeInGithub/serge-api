@@ -6,7 +6,7 @@ require("./config/db");
 const express = require("express");
 
 // import swagger config
-const swaggerDocs = require('./swagger') 
+const swaggerDocs = require('./swagger/swagger') 
 
 // import jsonwebtoken
 const jwt = require('jsonwebtoken');
@@ -14,6 +14,8 @@ const jwt = require('jsonwebtoken');
 // create express app
 const app = express();
 
+const postRouter = require('./api/routes/postRoutes');
+const authRouter = require('./api/routes/authRoutes');
 
 // define port to run express app
 const port = process.env.PORT || 9000;
@@ -50,18 +52,16 @@ module.exports = app.listen(port, () => {
 
   console.log(`Server running at http://localhost:${port}`);
   swaggerDocs(app, port)
-});
-
-
-// Import API route
-var postRoutes = require('./api/routes/postRoutes'); //importing route
-const authRoutes = require("./api/routes/userRoutes");
-authRoutes(app);
-postRoutes(app);
-
-
-app.use((req, res) => {
-  res.status(404).json({
-    message: "Page doesn't exist"
+  app.use((req, res) => {
+    res.status(404).json({
+      message: "Page doesn't exist"
+    });
   });
 });
+
+
+
+
+app.use(postRouter);
+app.use(authRouter);
+
