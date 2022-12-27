@@ -1,15 +1,19 @@
-const Joi = require('joi');
+import Joi from 'joi'
 
-exports.postValidation = Joi.object({
-    title: Joi.string().trim()
-      .min(3)
-      .max(30)
-      .required(),
+const postValidation = Joi.object({
+  title: Joi.string().trim()
+    .min(3)
+    .max(30)
+    .required(),
 
-    content: Joi.string().trim()
-      .min(3)
-      .max(1500)
-      .required(),
+  content: Joi.string().trim()
+    .min(3)
+    .max(1500)
+    .required()
 
-  })
+})
   .with('title', 'content')
+
+export default {
+  postValidation
+}

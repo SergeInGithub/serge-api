@@ -1,46 +1,45 @@
-'use strict';
 
-   // Import mongoose
-   const  mongoose = require("mongoose");
+// Import mongoose
+import mongoose from 'mongoose'
 
-   // Import bcryptjs - for password hashing
-   const  bcrypt = require('bcryptjs');
+// Import bcryptjs - for password hashing
+import bcrypt from 'bcryptjs'
 
-   // Declare schema and assign Schema class
-   const  Schema = mongoose.Schema;
+// Declare schema and assign Schema class
+const Schema = mongoose.Schema
 
-   // Create Schema Instance for User and add properties
-   const  UserSchema = new  Schema({
-   fullName: {
-   type:  String,
-   trim:  true,
-   required:  true
-   },
+// Create Schema Instance for User and add properties
+const UserSchema = new Schema({
+  fullName: {
+    type: String,
+    trim: true,
+    required: true
+  },
 
-   email: {
-   type:String,
-   unique:true,
-   lovercase:true,
-   trim:true,
-   required:true
-   } ,
+  email: {
+    type: String,
+    unique: true,
+    lowercase: true,
+    trim: true,
+    required: true
+  },
 
-   password: {
-   type:String,
-   required:true
-   },
+  password: {
+    type: String,
+    required: true
+  },
 
-   createdOn: {
-   type:  Date,
-   default:  Date.now
- },
- isAdmin: {
-   type: Boolean,
-   default: false,
- }
-   });
+  createdOn: {
+    type: Date,
+    default: Date.now
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  }
+})
 
-   UserSchema.pre('save', function (next) {
+UserSchema.pre('save', function (next) {
   if (this.isModified('password')) {
     bcrypt.hash(this.password, 8, (err, hash) => {
       if (err) return next(err)
@@ -72,10 +71,10 @@ UserSchema.statics.isThisEmailInUse = async function (email) {
   }
 }
 
-   //Create a Schema method to compare password
-   // UserSchema.methods.comparePassword = function(password){
-   // return  bcrypt.compareSync(password, this.password);
-   // }
+// Create a Schema method to compare password
+// UserSchema.methods.comparePassword = function(password){
+// return  bcrypt.compareSync(password, this.password);
+// }
 
-   // Create and export User model
-   module.exports = mongoose.model("User", UserSchema);
+// Create and export User model
+export default mongoose.model('User', UserSchema)
