@@ -10,10 +10,10 @@
  *      properties:
  *        title:
  *          type: string
- *          default: A$ap Rocky is sick
+ *          default: A Rocky is sick
  *        content:
  *          type: string
- *          default: I came I saw, I praise the LORD
+ *          default: I came and I saw,
  *    CreatePostResponse:
  *      type: object
  *      properties:

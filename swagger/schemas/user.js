@@ -11,11 +11,11 @@
  *      properties:
  *        fullName:
  *          type: string
- *          default: MUCYO Davis
+ *          default: SergeNYIRIGIRA
  *        email:
  *          type: string
- *          default: davis@gmail.com
+ *          default: serge@gmail.com
  *        password:
  *          type: string
- *          default: Password!23
+ *          default: myPassword
  */

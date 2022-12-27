@@ -1,19 +1,21 @@
-'use strict';
 
-const express = require('express');
+import express from 'express'
 
-var userHandlers = require('../middleware/authenticationMiddleware');
+import { loginRequired, isAdmin } from '../middleware/authenticationMiddleware.js'
 
-var postList = require('../controllers/postController');
+import {
+  listAllposts,
+  listPost,
+  createNewpost,
+  updatePost,
+  deletePost
+} from '../controllers/postController.js'
 
-const {loginRequired, isAdmin} = userHandlers;
+import { validate } from '../middleware/validationMiddleware.js'
 
-const {validate} = require("../middleware/validationMiddleware");
+import validation from '../middleware/schemasValidation/postValidation.js'
 
-const validation = require("../middleware/schemasValidation/postValidation")
-
-const router = express.Router();
-
+const router = express.Router()
 
 /**
  * @swagger
@@ -25,7 +27,7 @@ const router = express.Router();
  *        200:
  *          description: Get all posts from our API
  */
-router.get('/post/all', postList.listAllposts) // all posts
+router.get('/post/all', listAllposts) // all posts
 /**
  * @swagger
  * /post/get/{postId}:
@@ -47,7 +49,7 @@ router.get('/post/all', postList.listAllposts) // all posts
  *        404:
  *          description: not found
  */
-router.get('/post/get/:id', postList.listPost) // individual post
+router.get('/post/get/:id', listPost) // individual post
 /**
  * @swagger
  * /post/create/:
@@ -68,7 +70,7 @@ router.get('/post/get/:id', postList.listPost) // individual post
 router.post(
   '/post/create',
   [loginRequired, isAdmin, validate(validation.postValidation)],
-  postList.createNewpost
+  createNewpost
 ) // create post
 
 /**
@@ -96,7 +98,7 @@ router.post(
 router.patch(
   '/post/update/:id',
   [loginRequired, isAdmin, validate(validation.postValidation)],
-  postList.updatePost
+  updatePost
 ) // update post
 /**
  * @swagger
@@ -119,6 +121,6 @@ router.patch(
  *        404:
  *          description: not found
  */
-router.delete('/post/delete/:id', [loginRequired, isAdmin], postList.deletePost) // delete post
+router.delete('/post/delete/:id', [loginRequired, isAdmin], deletePost) // delete post
 
-module.exports = router
+export default router

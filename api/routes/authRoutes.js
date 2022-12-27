@@ -1,10 +1,9 @@
-'use strict';
-  const express = require('express');
-      var userHandlers = require('../middleware/authenticationMiddleware');
-      const {loginRequired, isAdmin} = userHandlers;
-      const {listAllUsers, listOneUser, register, signIn} = require('../controllers/authController')
+'use strict'
+import express from 'express'
+import { listAllUsers, listOneUser, register, signIn } from '../controllers/authController.js'
+import { loginRequired, isAdmin } from '../middleware/authenticationMiddleware.js'
 
-  const router = express.Router()
+const router = express.Router()
 
 /**
  * @swagger
@@ -34,7 +33,7 @@ router.get('/auth/all_users', [loginRequired, isAdmin], listAllUsers) // all use
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/user'
+ *                $ref: '#/components/schemas/CreateUserInput'
  *        404:
  *          description: not found
  */
@@ -78,5 +77,4 @@ router.post('/auth/register', register) // create user
  */
 router.post('/auth/sign_in', signIn) // user sign in
 
-
-module.exports =  router
+export default router

@@ -1,25 +1,23 @@
-'use strict'
 // Import DB Connection
-require("./config/db");
+import db from './config/db.js'
 
 // require express
-const express = require("express");
+import express from 'express'
 
 // import swagger config
-const swaggerDocs = require('./swagger/swagger') 
+import swaggerDocs from './swagger/swagger.js'
 
 // import jsonwebtoken
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken'
 
+import postRouter from './api/routes/postRoutes.js'
+import authRouter from './api/routes/authRoutes.js'
+db()
 // create express app
-const app = express();
-
-const postRouter = require('./api/routes/postRoutes');
-const authRouter = require('./api/routes/authRoutes');
+const app = express()
 
 // define port to run express app
-const port = process.env.PORT || 9000;
-
+const port = process.env.PORT || 9000
 
 app.use(express.json())
 app.use(express.urlencoded({
@@ -27,41 +25,35 @@ app.use(express.urlencoded({
 }))
 // Add endpoint
 app.get('/', (req, res) => {
-  res.send("Hello World");
-});
+  res.send('Hello World')
+})
 
 // Token Verification
 app.use((req, res, next) => {
   if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
     jwt.verify(req.headers.authorization.split(' ')[1], 'RESTfulAPIs', (err, decode) => {
-      if (err) req.user = undefined;
-      req.user = decode;
-      next();
-    });
+      if (err) req.user = undefined
+      req.user = decode
+      next()
+    })
   } else {
-    req.user = undefined;
-    next();
+    req.user = undefined
+    next()
   }
-});
+})
 
 // API endpoint
 
-
 // Listen to server
-module.exports = app.listen(port, () => {
-
-  console.log(`Server running at http://localhost:${port}`);
+export default app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`)
   swaggerDocs(app, port)
   app.use((req, res) => {
     res.status(404).json({
       message: "Page doesn't exist"
-    });
-  });
-});
+    })
+  })
+})
 
-
-
-
-app.use(postRouter);
-app.use(authRouter);
-
+app.use(postRouter)
+app.use(authRouter)
