@@ -10,13 +10,17 @@ config()
 // DEFINE CONTROLLER FUNCTIONS
 
 // List all users
-const listAllUsers = (req, res) => {
-  const allUsers = User.find()
+const listAllUsers = async (req, res) => {
+ try {
+  const allUsers = await User.find()
   if (!allUsers) {
     res.status(500).json({ message: 'Server Error - Try again later.' })
   } else {
     res.status(200).json(allUsers)
   }
+ } catch (error) {
+  console.log('Error fetching all users:' , error.message)
+ } 
 }
 
 const listOneUser = async (req, res) => {
