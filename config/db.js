@@ -2,8 +2,7 @@
 import mongoose from 'mongoose'
 
 // Assign MongoDB connection string to Uri and declare options settings
-// var  uri = "mongodb://localhost:27017/serge"
-const uri = 'mongodb://localhost:27017/serge-dev'
+
 
 // Declare a variable named option and assign optional settings
 const options = {
@@ -14,7 +13,7 @@ const options = {
 mongoose.set('strictQuery', true)
 // Connect MongoDB Atlas using mongoose connect method
 const db = () => {
-  mongoose.connect(uri, options).then(() => {
+  mongoose.connect(process.env.MONGO_URI, options).then(() => {
     console.log('Database connection established!')
   },
   err => {
