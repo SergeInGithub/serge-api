@@ -1,21 +1,27 @@
+import express from "express";
 
-import express from 'express'
-
-import { loginRequired, isAdmin } from '../middleware/authenticationMiddleware.js'
+import {
+  loginRequired,
+  isAdmin,
+} from "../middleware/authenticationMiddleware.js";
 
 import {
   listAllposts,
   listPost,
   createNewpost,
   updatePost,
-  deletePost
-} from '../controllers/postController.js'
+  deletePost,
+  addLike,
+  addComment,
+  sendMessage,
+  listAllMessages,
+} from "../controllers/postController.js";
 
-import { validate } from '../middleware/validationMiddleware.js'
+import { validate } from "../middleware/validationMiddleware.js";
 
-import validation from '../middleware/schemasValidation/postValidation.js'
+import validation from "../middleware/schemasValidation/postValidation.js";
 
-const router = express.Router()
+const router = express.Router();
 
 /**
  * @swagger
@@ -27,7 +33,7 @@ const router = express.Router()
  *        200:
  *          description: Get all posts from our API
  */
-router.get('/post/all', listAllposts) // all posts
+router.get("/post/all", listAllposts); // all posts
 /**
  * @swagger
  * /post/get/{postId}:
@@ -49,7 +55,7 @@ router.get('/post/all', listAllposts) // all posts
  *        404:
  *          description: not found
  */
-router.get('/post/get/:id', listPost) // individual post
+router.get("/post/get/:id", listPost); // individual post
 /**
  * @swagger
  * /post/create/:
@@ -68,10 +74,10 @@ router.get('/post/get/:id', listPost) // individual post
  *         description: Created
  */
 router.post(
-  '/post/create',
+  "/post/create",
   [loginRequired, isAdmin, validate(validation.postValidation)],
   createNewpost
-) // create post
+); // create post
 
 /**
  * @swagger
@@ -96,10 +102,10 @@ router.post(
  *         description: Created successfully
  */
 router.patch(
-  '/post/update/:id',
+  "/post/update/:id",
   [loginRequired, isAdmin, validate(validation.postValidation)],
   updatePost
-) // update post
+); // update post
 /**
  * @swagger
  * /post/delete/{postId}:
@@ -121,6 +127,80 @@ router.patch(
  *        404:
  *          description: not found
  */
-router.delete('/post/delete/:id', [loginRequired, isAdmin], deletePost) // delete post
+router.delete("/post/delete/:id", [loginRequired, isAdmin], deletePost); // delete post
 
-export default router
+/**
+ * @swagger
+ * /post/get/{id}/likes:
+ *   post:
+ *     summary: Add like
+ *     tags: [feedback endpoints]
+ *     parameters:
+ *      - name: id
+ *        in: path
+ *        description: provide postId
+ *        required: true
+ *     responses:
+ *       '201':
+ *         description: Blog successfully liked
+ *       '401':
+ *         description: Unauthorized access
+ */
+router.post("/post/get/:id/likes", addLike);
+
+/**
+ * @swagger
+ * /post/get/{id}/comments:
+ *   post:
+ *     summary: Add comment
+ *     tags: [feedback endpoints]
+ *     parameters:
+ *      - name: id
+ *        in: path
+ *        description: provide postId
+ *        required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AddComment'
+ *     responses:
+ *       '201':
+ *         description: Successfully added comment
+ *       '401':
+ *         description: Unauthorized access
+ */
+router.post("/post/get/:id/comments", addComment);
+
+/**
+ * @swagger
+ * /contact/:
+ *   post:
+ *     summary: Send Messages
+ *     tags: [feedback endpoints]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SendSMS'
+ *     responses:
+ *       '201':
+ *         description: Message successfully sent
+ */
+router.post("/contact", sendMessage);
+
+/**
+ * @swagger
+ * /contact/messages:
+ *    get:
+ *      tags: [feedback endpoints]
+ *      description: Returns all messages from our database
+ *      responses:
+ *        200:
+ *          description: Messages successfully retrieved
+ */
+router.get("/contact/messages", listAllMessages);
+
+export default router;
