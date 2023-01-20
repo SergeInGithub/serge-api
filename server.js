@@ -10,11 +10,15 @@ import swaggerDocs from './swagger/swagger.js'
 // import jsonwebtoken
 import jwt from 'jsonwebtoken'
 
+import cors from 'cors'
+
 import postRouter from './api/routes/postRoutes.js'
 import authRouter from './api/routes/authRoutes.js'
 db()
 // create express app
 const app = express()
+
+app.use(cors())
 
 // define port to run express app
 const port = process.env.PORT || 9000
