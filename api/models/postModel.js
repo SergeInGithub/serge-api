@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 
 // Create Schema Instance and add schema propertise
 const PostSchema = new Schema({
+  cover: String,
   title: {
     type: String,
     required: true,
